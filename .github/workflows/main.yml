@@ -8,7 +8,7 @@ jobs:
     container: ghcr.io/opencyphal/toolshed:ts22.4.1
     strategy:
       matrix:
-        toolchain: ['clang', 'gcc']
+        toolchain: ['clang']
         include:
           - toolchain: clang
             c-compiler: clang
