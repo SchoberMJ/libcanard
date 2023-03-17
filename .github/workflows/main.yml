@@ -10,9 +10,6 @@ jobs:
       matrix:
         toolchain: ['clang', 'gcc']
         include:
-          - toolchain: gcc
-            c-compiler: gcc
-            cxx-compiler: g++
           - toolchain: clang
             c-compiler: clang
             cxx-compiler: clang++
@@ -31,8 +28,10 @@ jobs:
           echo 'runner.workspace === ${{ runner.workspace }}'
           ls ${{ github.workspace }}
           ls ${{ runner.workspace }}
-      - working-directory: ${{github.workspace}}/build
+      - working-directory: ${{github.workspace}}
         run: |
+          ls
+          cd build
           make VERBOSE=1
           make test
       - uses: actions/upload-artifact@v2
