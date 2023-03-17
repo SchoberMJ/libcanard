@@ -17,7 +17,7 @@ jobs:
             c-compiler: clang
             cxx-compiler: clang++
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - run: >
           cmake
           -B ${{ github.workspace }}/build
@@ -25,8 +25,9 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.c-compiler }}
           -DCMAKE_CXX_COMPILER=${{ matrix.cxx-compiler }}
           tests
-      - working-directory: ${{github.workspace}}/build
+      - working-directory: ${{github.workspace}}
         run: |
+          cd build
           make VERBOSE=1
           make test
       - uses: actions/upload-artifact@v2
