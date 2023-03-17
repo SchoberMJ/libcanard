@@ -8,30 +8,30 @@ jobs:
     container: ghcr.io/opencyphal/toolshed:ts22.4.1
     strategy:
       matrix:
-        build_type: [Debug]
-        target: [native]
-        compiler: [gcc, clang]
+        toolchain: ['clang', 'gcc']
+        include:
+          - toolchain: gcc
+            c-compiler: gcc
+            cxx-compiler: g++
+          - toolchain: clang
+            c-compiler: clang
+            cxx-compiler: clang++
     steps:
-      - uses: actions/checkout@v3
-      - run: test/ci/verify.py -v
-                          --target ${{matrix.target}}
-                          --build-type ${{ matrix.build_type }}
-                          --toolchain-family ${{ matrix.compiler }}
-                          configure
-                          --omit-style-check-from-all
-      - run: test/ci/verify.py -v
-                          --target ${{matrix.target}}
-                          --build-type ${{ matrix.build_type }}
-                          --toolchain-family ${{ matrix.compiler }}
-                          build
-      - run: test/ci/verify.py -v
-                          --target ${{matrix.target}}
-                          --build-type ${{ matrix.build_type }}
-                          --toolchain-family ${{ matrix.compiler }}
-                          compile-test
-      - run: test/ci/verify.py -v
-                          --target ${{matrix.target}}
-                          --build-type ${{ matrix.build_type }}
-                          --toolchain-family ${{ matrix.compiler }}
-                          test
-                          test_all
+      - uses: actions/checkout@v2
+      - run: >
+          cmake
+          -B ${{ github.workspace }}/build
+          -DCMAKE_BUILD_TYPE=Debug
+          -DCMAKE_C_COMPILER=${{ matrix.c-compiler }}
+          -DCMAKE_CXX_COMPILER=${{ matrix.cxx-compiler }}
+          tests
+      - working-directory: ${{github.workspace}}/build
+        run: |
+          make VERBOSE=1
+          make test
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: ${{github.job}}
+          path: ${{github.workspace}}/**/*
+          retention-days: 2
