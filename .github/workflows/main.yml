@@ -22,16 +22,10 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.c-compiler }}
           -DCMAKE_CXX_COMPILER=${{ matrix.cxx-compiler }}
           tests
-      - name: dump
+      - name: make
         run: |
-          echo 'github.workspace === ${{ github.workspace }}'
-          echo 'runner.workspace === ${{ runner.workspace }}'
           ls ${{ github.workspace }}
-          ls ${{ runner.workspace }}
-      - working-directory: ${{github.workspace}}
-        run: |
-          ls
-          cd build
+          cd ${{ github.workspace }}/build
           make VERBOSE=1
           make test
       - uses: actions/upload-artifact@v2
